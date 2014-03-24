@@ -88,13 +88,16 @@ public class BubbleActivity extends Activity {
 				/ mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
 		// TODO - make a new SoundPool, allowing up to 10 streams 
-		mSoundPool = null;
+		mSoundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
 
 		// TODO - set a SoundPool OnLoadCompletedListener that calls setupGestureDetector()
-
-		
+		mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+	        public void onLoadComplete(SoundPool sp, int sid, int status) {
+	            	setupGestureDetector();
+	        	}
+	        });
 		// TODO - load the sound from res/raw/bubble_pop.wav
-		mSoundID = 0;
+		mSoundID = mSoundPool.load(this, R.raw.bubble_pop, 1);
 
 	}
 
@@ -181,14 +184,7 @@ public class BubbleActivity extends Activity {
 	protected void onPause() {
 		
 		// TODO - Release all SoundPool resources
-
-
-		
-		
-		
-		
-		
-		
+		mSoundPool.release();
 		
 		super.onPause();
 	}
@@ -240,9 +236,7 @@ public class BubbleActivity extends Activity {
 			if (speedMode == RANDOM) {
 				
 				// TODO - set rotation in range [1..3]
-				mDRotate = 0;
-
-				
+				mDRotate = (r.nextInt(3) + 1);
 			} else {
 			
 				mDRotate = 0;
@@ -274,13 +268,8 @@ public class BubbleActivity extends Activity {
 				// TODO - Set movement direction and speed
 				// Limit movement speed in the x and y
 				// direction to [-3..3].
-
-
-			
-			
-			
-			
-			
+				mDx = (-1)*r.nextInt(4) + r.nextInt(4);
+				mDy = (-1)*r.nextInt(4) + r.nextInt(4);
 			}
 		}
 
@@ -293,12 +282,11 @@ public class BubbleActivity extends Activity {
 			} else {
 			
 				//TODO - set scaled bitmap size in range [1..3] * BITMAP_SIZE
-				mScaledBitmapWidth = 0;
-			
+				mScaledBitmapWidth = (r.nextInt(3) + 1) * BITMAP_SIZE;
 			}
 
 			// TODO - create the scaled bitmap using size set above
-			mScaledBitmap = null;
+			mScaledBitmap = mBitmap.createScaledBitmap(mBitmap, mScaledBitmapWidth, mDisplayHeight, true);
 		}
 
 		// Start moving the BubbleView & updating the display
