@@ -307,12 +307,14 @@ public class BubbleActivity extends Activity {
 					// move one step. If the BubbleView exits the display, 
 					// stop the BubbleView's Worker Thread. 
 					// Otherwise, request that the BubbleView be redrawn. 
+					mXPos = mXPos + mDx;
+					mYPos = mYPos + mDy;
 					
-
-					
-					
-					
-					
+					if(isOutOfView()){
+						stop(false);
+					}else{
+						invalidate();
+					}
 				}
 			}, 0, REFRESH_RATE, TimeUnit.MILLISECONDS);
 		}
@@ -320,8 +322,11 @@ public class BubbleActivity extends Activity {
 		private synchronized boolean intersects(float x, float y) {
 
 			// TODO - Return true if the BubbleView intersects position (x,y)
-
-			return false;
+			if((Math.abs(mXPos - x) < mDisplayWidth) || Math.abs(mYPos - y) < mDisplayHeight){
+				return true;
+			}else{
+				return false;	
+			}
 		}
 
 		// Cancel the Bubble's movement
@@ -339,17 +344,14 @@ public class BubbleActivity extends Activity {
 					public void run() {
 						
 						// TODO - Remove the BubbleView from mFrame
-
-
-						
+						mFrame.removeView(BubbleView.this);
 						
 						if (popped) {
 							log("Pop!");
 
 							// TODO - If the bubble was popped by user,
 							// play the popping sound
-
-						
+							mSoundPool.play(mSoundID, mStreamVolume, mStreamVolume, 1, 0, 1.0f);
 						}
 
 						log("Bubble removed from view!");
@@ -364,7 +366,6 @@ public class BubbleActivity extends Activity {
 			log("velocity X:" + velocityX + " velocity Y:" + velocityY);
 
 			//TODO - set mDx and mDy to be the new velocities divided by the REFRESH_RATE
-			
 			mDx = 0;
 			mDy = 0;
 
